@@ -7,7 +7,7 @@
 #define AUTHOR "Trystan"
 #define VERSION "1.0.1"
 #define MYNAME "ircd_ports"
-#define SERVPORTTABLE "serverports"
+#define SERVPORTTABLE "ircd_ports"
 
 int DenoraInit(int argc, char **argv);
 void DenoraFini(void);
@@ -129,12 +129,17 @@ int get_port(char *source, int ac, char **av)
     char *portnum;
     char *type;
     char *temp = NULL;
+    char isserver = 'N', isclient = 'N', ishidden = 'N', isssl = 'N';
     Server *s;
     User *u = NULL;
 
 	USE_VAR(ac);
 
     if (denora_get_ircd() == IRC_SOLIDIRCD) {
+        s = server_find(source);
+        if (!s) {
+            return MOD_CONT;
+        }
         port = myStrGetToken(av[1], ' ', 0);
         if (!port) {
             return MOD_CONT;
@@ -151,7 +156,10 @@ int get_port(char *source, int ac, char **av)
             return MOD_CONT;
         }
     } else if (denora_get_ircd() == IRC_UNREAL32) {
-
+        s = server_find(source);
+        if (!s) {
+            return MOD_CONT;
+        }
         if (!stricmp(av[0], s_StatServ)) {
             port = myStrGetToken(av[1], ' ', 3);
             if (!port) {
@@ -166,7 +174,6 @@ int get_port(char *source, int ac, char **av)
             free(port);
             free(portnum);
             free(type);
-            free(temp);
             return MOD_CONT;
         }
     } else if (denora_get_ircd() == IRC_ASUKA || denora_get_ircd() == IRC_NEFARIOUS || denora_get_ircd() == IRC_IRCU) {
@@ -180,17 +187,14 @@ int get_port(char *source, int ac, char **av)
         }
         if (!stricmp(u->nick, s_StatServ)) {
             if (!stricmp(av[1], "P")) {
-                if (!stricmp(av[4], "C")) {
-                    type = sstrdup("Clients");
-                } else if (!stricmp(av[4], "S")) {
-                    type = sstrdup("Servers");
-                } else {
-                    type = sstrdup("Unknown");
-                }
+                type = av[4];
+                isserver = (strchr(av[4], 'S') != NULL ? 'Y' : 'N');
+                isclient = (strchr(av[4], 'C') != NULL ? 'Y' : 'N');
+                ishidden = (strchr(av[4], 'H') != NULL ? 'Y' : 'N');
+                isssl = (strchr(av[4], 'E') != NULL ? 'Y' : 'N');
                 rdb_query
-                 (QUERY_LOW, "INSERT INTO %s (name, portnum, porttype) VALUES(\'%s\',\'%s\',\'%s\')",
-                 SERVPORTTABLE, s->name, av[2], type);
-		free(type);
+                 (QUERY_LOW, "INSERT INTO %s (name, portnum, porttype, is_server, is_client, is_hidden, is_ssl) VALUES(\'%s\',\'%s\',\'%s\',\'%c\',\'%c\',\'%c\',\'%c\')",
+                 SERVPORTTABLE, s->name, av[2], type, isserver, isclient, ishidden, isssl);
             }
         }
     }

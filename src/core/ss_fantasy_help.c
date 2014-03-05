@@ -71,7 +71,7 @@ int do_fantasy(int argc, char **argv)
 		return MOD_CONT;
 	}
 
-	if (stricmp(argv[0], "help") == 0)
+	if (stricmp(argv[0], "statshelp") == 0)
 	{
 		u = finduser(argv[1]);
 		notice_lang(s_StatServ, u, STATS_HELP_CHANNEL_1);

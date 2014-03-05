@@ -21,7 +21,7 @@ IRCDVar myIrcd[] =
 {
 	{
 		"Nefarious IRCu 2",      /* ircd name                 */
-		"+iok",                    /* StatServ mode             */
+		"+iokr stats",             /* StatServ mode             */
 		IRCD_ENABLE,               /* Vhost                     */
 		IRCD_DISABLE,              /* Supports SGlines          */
 		IRCD_DISABLE,              /* sgline sql table          */
