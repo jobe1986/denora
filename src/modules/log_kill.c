@@ -13,6 +13,7 @@
 int DenoraInit(int argc, char **argv);
 void DenoraFini(void);
 int my_kill(int argc, char **argv);
+int my_skill(int argc, char **argv);
 void create_table(void);
 
 int DenoraInit(int argc, char **argv)
