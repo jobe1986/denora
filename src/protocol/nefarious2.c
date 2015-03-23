@@ -1098,7 +1098,7 @@ int denora_event_mode(char *source, int ac, char **av)
 		}
 		else if (!strcmp(av[1], "+o"))
 		{
-			if (denora->do_sql)
+			if (0 && denora->do_sql)
 			{
 				u2 = find_byuid(av[2]);
 				c = findchan(av[0]);
